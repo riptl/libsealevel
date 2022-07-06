@@ -1,6 +1,6 @@
 [package]
 name = "sealevel-ffi"
-version = "1.11.2"
+version = "0.1.0"
 description = "FFI bindings for Sealevel virtual machine"
 authors = ["Richard Patel <me@terorie.dev>"]
 repository = "https://github.com/solana-labs/solana"
