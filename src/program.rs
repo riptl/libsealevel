@@ -36,6 +36,8 @@ pub struct sealevel_instruction_account {
 /// Syscalls and config may be null pointers, in which case defaults are used.
 /// These defaults is not stable across any libsealevel versions.
 ///
+/// If a syscall registry is provided, it is consumed, and cannot be used a second time.
+///
 /// # Safety
 /// Avoid the following undefined behavior:
 /// - Using the syscalls object parameter after calling this function (including a second call of this function).
@@ -56,7 +58,7 @@ pub unsafe extern "C" fn sealevel_load_program(
     let syscalls = if syscalls.0.is_null() {
         SyscallRegistry::default()
     } else {
-        (*(syscalls.0 as *mut SyscallRegistry)).clone()
+        syscalls.take().unwrap() // TODO set error code
     };
     let load_result =
         Executable::<BpfError, ThisInstructionMeter>::from_elf(data_slice, config, syscalls);

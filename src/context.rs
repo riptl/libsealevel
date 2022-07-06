@@ -20,6 +20,28 @@ use {
 #[derive(Clone, Copy)]
 pub struct sealevel_syscall_registry(pub(crate) *mut c_void);
 
+impl sealevel_syscall_registry {
+    pub fn new(registry: SyscallRegistry) -> Self {
+        let boxed: Box<Option<SyscallRegistry>> = Box::new(Some(registry));
+        Self(Box::into_raw(boxed) as *mut c_void)
+    }
+
+    pub fn unwrap(self) -> *mut Option<SyscallRegistry> {
+        self.0 as *mut Option<SyscallRegistry>
+    }
+
+    pub fn take(self) -> Option<SyscallRegistry> {
+        unsafe { (*self.unwrap()).take() }
+    }
+
+    pub unsafe fn free(self) {
+        if self.0.is_null() {
+            return;
+        }
+        drop(Box::from_raw(self.unwrap()))
+    }
+}
+
 #[repr(C)]
 pub enum sealevel_syscall_id {
     SEALEVEL_SYSCALL_INVALID,
@@ -58,12 +80,6 @@ pub enum sealevel_syscall_id {
     SEALEVEL_SYSCALL_SOL_GET_STACK_HEIGHT,
 }
 
-impl sealevel_syscall_registry {
-    fn unwrap(self) -> *mut SyscallRegistry {
-        self.0 as *mut SyscallRegistry
-    }
-}
-
 /// Creates a new, empty syscall registry.
 ///
 /// # Safety
@@ -71,8 +87,7 @@ impl sealevel_syscall_registry {
 /// Failure to do so results in a memory leak.
 #[no_mangle]
 pub extern "C" fn sealevel_syscall_registry_new() -> sealevel_syscall_registry {
-    let registry = SyscallRegistry::default();
-    sealevel_syscall_registry(Box::into_raw(Box::new(registry)) as *mut c_void)
+    sealevel_syscall_registry::new(SyscallRegistry::default())
 }
 
 /// Frees a syscall registry.
@@ -83,10 +98,7 @@ pub extern "C" fn sealevel_syscall_registry_new() -> sealevel_syscall_registry {
 /// - Using the syscall registry after calling this function.
 #[no_mangle]
 pub unsafe extern "C" fn sealevel_syscall_registry_free(registry: sealevel_syscall_registry) {
-    if registry.0.is_null() {
-        return;
-    }
-    drop(Box::from_raw(registry.unwrap()))
+    registry.free()
 }
 
 /// Registers a Solana builtin syscall.
@@ -104,7 +116,10 @@ pub unsafe extern "C" fn sealevel_syscall_register_builtin(
     syscall_id: sealevel_syscall_id,
 ) -> bool {
     let registry_ptr = registry.unwrap();
-    let syscall_registry = &mut (*registry_ptr);
+    let syscall_registry = match (*registry_ptr).as_mut() {
+        None => return false,
+        Some(registry) => registry,
+    };
     // TODO: this is copy pasted from //programs/bpf-loader/src/syscalls.rs
     // TODO: handle unknown/future enum IDs to meet ABI stability
     let result = match syscall_id {
