@@ -5,9 +5,11 @@ description = "FFI bindings for Sealevel virtual machine"
 authors = ["Richard Patel <me@terorie.dev>"]
 repository = "https://github.com/solana-labs/solana"
 homepage = "https://solana.com/"
-documentation = "https://docs.rs/rbpf-ffi"
+documentation = "https://docs.rs/sealevel-ffi"
 license = "Apache-2.0"
 edition = "2021"
+categories = ["cryptography::cryptocurrencies"]
+keywords = ["solana"]
 
 [lib]
 name = "sealevel"
