@@ -21,6 +21,7 @@ use {
 pub struct sealevel_syscall_registry(pub(crate) *mut c_void);
 
 impl sealevel_syscall_registry {
+    /// Moves a SyscallRegistry into a C object.
     pub fn new(registry: SyscallRegistry) -> Self {
         let boxed: Box<Option<SyscallRegistry>> = Box::new(Some(registry));
         Self(Box::into_raw(boxed) as *mut c_void)
@@ -30,10 +31,13 @@ impl sealevel_syscall_registry {
         self.0 as *mut Option<SyscallRegistry>
     }
 
+    /// Moves a SyscallRegistry out of a C object back to Rust.
     pub fn take(self) -> Option<SyscallRegistry> {
         unsafe { (*self.unwrap()).take() }
     }
 
+    /// See docs of `sealevel_syscall_registry_free`.
+    #[allow(clippy::missing_safety_doc)]
     pub unsafe fn free(self) {
         if self.0.is_null() {
             return;

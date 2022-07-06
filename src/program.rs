@@ -68,7 +68,7 @@ pub unsafe extern "C" fn sealevel_load_program(
     };
     let verify_result = VerifiedExecutable::from_executable(executable);
     match hoist_error(verify_result) {
-        None => return null_mut(),
+        None => null_mut(),
         Some(program) => {
             let wrapper = sealevel_executable {
                 program,
