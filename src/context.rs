@@ -8,8 +8,7 @@ use {
         SyscallInvokeSignedRust, SyscallKeccak256, SyscallLog, SyscallLogBpfComputeUnits,
         SyscallLogData, SyscallLogPubkey, SyscallLogU64, SyscallMemcmp, SyscallMemcpy,
         SyscallMemmove, SyscallMemset, SyscallPanic, SyscallSecp256k1Recover, SyscallSetReturnData,
-        SyscallSha256, SyscallTryFindProgramAddress, SyscallZkTokenElgamalOp,
-        SyscallZkTokenElgamalOpWithLoHi, SyscallZkTokenElgamalOpWithScalar,
+        SyscallSha256, SyscallTryFindProgramAddress,
     },
     solana_rbpf::vm::{SyscallObject, SyscallRegistry},
     std::ffi::c_void,
@@ -61,9 +60,6 @@ pub enum sealevel_syscall_id {
     SEALEVEL_SYSCALL_SOL_KECCAK256,
     SEALEVEL_SYSCALL_SOL_SECP256K1_RECOVER,
     SEALEVEL_SYSCALL_SOL_BLAKE3,
-    SEALEVEL_SYSCALL_SOL_ZK_TOKEN_ELGAMAL_OP,
-    SEALEVEL_SYSCALL_SOL_ZK_TOKEN_ELGAMAL_OP_WITH_LO_HI,
-    SEALEVEL_SYSCALL_SOL_ZK_TOKEN_ELGAMAL_OP_WITH_SCALAR,
     SEALEVEL_SYSCALL_SOL_CURVE_VALIDATE_POINT,
     SEALEVEL_SYSCALL_SOL_CURVE_GROUP_OP,
     SEALEVEL_SYSCALL_SOL_GET_CLOCK_SYSVAR,
@@ -182,26 +178,6 @@ pub unsafe extern "C" fn sealevel_syscall_register_builtin(
             ),
         sealevel_syscall_id::SEALEVEL_SYSCALL_SOL_BLAKE3 => syscall_registry
             .register_syscall_by_name(b"sol_blake3", SyscallBlake3::init, SyscallBlake3::call),
-        sealevel_syscall_id::SEALEVEL_SYSCALL_SOL_ZK_TOKEN_ELGAMAL_OP => syscall_registry
-            .register_syscall_by_name(
-                b"sol_zk_token_elgamal_op",
-                SyscallZkTokenElgamalOp::init,
-                SyscallZkTokenElgamalOp::call,
-            ),
-        sealevel_syscall_id::SEALEVEL_SYSCALL_SOL_ZK_TOKEN_ELGAMAL_OP_WITH_LO_HI => {
-            syscall_registry.register_syscall_by_name(
-                b"sol_zk_token_elgamal_op_with_lo_hi",
-                SyscallZkTokenElgamalOpWithLoHi::init,
-                SyscallZkTokenElgamalOpWithLoHi::call,
-            )
-        }
-        sealevel_syscall_id::SEALEVEL_SYSCALL_SOL_ZK_TOKEN_ELGAMAL_OP_WITH_SCALAR => {
-            syscall_registry.register_syscall_by_name(
-                b"sol_zk_token_elgamal_op_with_scalar",
-                SyscallZkTokenElgamalOpWithScalar::init,
-                SyscallZkTokenElgamalOpWithScalar::call,
-            )
-        }
         sealevel_syscall_id::SEALEVEL_SYSCALL_SOL_CURVE_VALIDATE_POINT => syscall_registry
             .register_syscall_by_name(
                 b"sol_curve_validate_point",

@@ -16,7 +16,7 @@ name = "sealevel"
 crate-type = ["rlib", "cdylib"]
 
 [dependencies]
-libc = "0.2.126"
-solana-bpf-loader-program = "1.11.1"
-solana-program-runtime = "1.11.1"
+libc = "0.2"
+solana-bpf-loader-program = "1.11.3"
+solana-program-runtime = "1.11.3"
 solana_rbpf = "=0.2.31"
