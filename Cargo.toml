@@ -17,6 +17,6 @@ crate-type = ["rlib", "cdylib"]
 
 [dependencies]
 libc = "0.2"
-solana-bpf-loader-program = "1.11.3"
+solana-bpf-loader-program = "1.11.4"
 solana-program-runtime = "1.11.3"
 solana_rbpf = "=0.2.31"
