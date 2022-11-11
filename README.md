@@ -2,4 +2,4 @@
 
 **C bindings for the Solana Sealevel virtual machine.**
 
-Work in progress.
+Archived. See https://github.com/firedancer-io/firedancer
